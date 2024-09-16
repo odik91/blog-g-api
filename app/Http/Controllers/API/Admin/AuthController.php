@@ -29,7 +29,7 @@ class AuthController extends Controller
         // Check if user exists and if the password matches
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
-                'message' => 'Login failed'
+                'message' => 'Invalid credentials, please try again'
             ], 401);
         }
 
