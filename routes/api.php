@@ -11,9 +11,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    
-    Route::group(['prefix' => 'category'], function() {
+
+    Route::group(['prefix' => 'category'], function () {
         Route::post('/', [CategoryController::class, 'create']);
+        Route::get('/', [CategoryController::class, 'getCategory']);
     });
 });
 

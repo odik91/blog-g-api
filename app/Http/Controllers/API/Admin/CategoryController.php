@@ -38,4 +38,23 @@ class CategoryController extends Controller
             ], 400);
         }
     }
+
+    public function getCategory(Request $request)
+    {
+        $order = $request->input('order', 'asc');
+        $name = $request->input('search', null);
+        $limit = (int) $request->input('limit', 10);
+
+        $categories = Category::query()
+            ->when($name, function ($query, $name) {
+                return $query->where('name', 'like', "%" . $name . "%");
+            })
+            ->orderBy('name', $order)
+            ->paginate($limit);
+
+        return response()->json([
+            'message' => 'success',
+            'categories' => $categories
+        ], 200);
+    }
 }
