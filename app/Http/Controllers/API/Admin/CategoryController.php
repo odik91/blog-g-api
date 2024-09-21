@@ -44,12 +44,27 @@ class CategoryController extends Controller
         $order = $request->input('order', 'asc');
         $name = $request->input('search', null);
         $limit = (int) $request->input('limit', 10);
+        $orderBy = $request->input('orderBy', 'name');
+        $findColumn = $request->input('searchData', null);
+        $findValue = $request->input('value', null);
+
+        $findData = null;
+        
+        if ($findColumn && $findValue) {
+            $findData = [
+                'search' => $findColumn,
+                'value' => $findValue,
+            ];
+        }
 
         $categories = Category::query()
             ->when($name, function ($query, $name) {
                 return $query->where('name', 'like', "%" . $name . "%");
             })
-            ->orderBy('name', $order)
+            ->when($findData, function ($query, $findData) {
+                return $query->where($findData['search'], 'like', "%" . $findData['value'] . "%");
+            })
+            ->orderBy($orderBy, $order)
             ->paginate($limit);
 
         return response()->json([
