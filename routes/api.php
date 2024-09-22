@@ -15,7 +15,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => 'category'], function () {
         Route::post('/', [CategoryController::class, 'create']);
         Route::get('/', [CategoryController::class, 'getCategory']);
+        Route::get('/{id}', [CategoryController::class, 'getSingleCategory']);
+        Route::patch('/{id}', [CategoryController::class, 'editCategory']);
+        Route::delete('/{id}', [CategoryController::class, 'deleteCategory']);
+        Route::patch('/restore/{id}', [CategoryController::class, 'restoreCategory']);
+        Route::delete('/destroy/{id}', [CategoryController::class, 'destroyCategory']);
+        Route::get('/trash/data', [CategoryController::class, 'getTrashCategory']);
     });
 });
-
 Route::post('/login', [AuthController::class, 'login']);
