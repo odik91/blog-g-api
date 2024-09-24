@@ -17,6 +17,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/', [CategoryController::class, 'getCategory']);
         Route::get('/{id}', [CategoryController::class, 'getSingleCategory']);
         Route::patch('/{id}', [CategoryController::class, 'editCategory']);
+        Route::patch('/', [CategoryController::class, 'massUpdateCategory']);
         Route::delete('/{id}', [CategoryController::class, 'deleteCategory']);
         Route::patch('/restore/{id}', [CategoryController::class, 'restoreCategory']);
         Route::delete('/destroy/{id}', [CategoryController::class, 'destroyCategory']);

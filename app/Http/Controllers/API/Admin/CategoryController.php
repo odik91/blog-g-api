@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -103,6 +104,61 @@ class CategoryController extends Controller
         }
     }
 
+    public function massUpdateCategory(Request $request)
+    {
+        foreach ($request->all() as $updateData) {
+            $validator = Validator::make($updateData, [
+                'id' => 'required',
+                'name' => 'required|min:3|unique:categories,name,' . $updateData['id'],
+                'description' => 'max:300',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'id' => $updateData['id'],
+                    'name' => $updateData['name'],
+                    'slug' => Str::slug($updateData['name']),
+                    'description' => $updateData['description'],
+                ], 400);
+            }
+        }
+
+        DB::beginTransaction();
+        try {
+            $message = '';
+            foreach ($request->all() as $key => $item) {
+                $category = Category::find($item['id']);
+
+                if ($category) {
+                    $category->update([
+                        'name' => $item['name'],
+                        'description' => $item['description']
+                    ]);
+
+                    if ($key == 0) {
+                        $message = $message . ucfirst($category['name']) . ", ";
+                    } elseif ($key == sizeof($request->all()) - 1) {
+                        $message = $message . 'and ' . $category['name'];
+                    } elseif ($key > 0 && $key < sizeof($request->all()) - 1) {
+                        $message = $message . $category["name"] . ', ';
+                    }
+                } else {
+                    throw new Exception("Category ID {$item->id} with {$item->name} not found");
+                }
+            }
+
+            DB::commit();
+            return response()->json([
+                'message' => $message . ' edited successfully.'
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function getSingleCategory($id)
     {
         $category = Category::find($id);
@@ -130,7 +186,7 @@ class CategoryController extends Controller
     }
 
     public function getTrashCategory(Request $request)
-    {        
+    {
         $order = $request->input('order', 'asc');
         $name = $request->input('search', null);
         $limit = (int) $request->input('limit', 10);
