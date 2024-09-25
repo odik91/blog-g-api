@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\Admin\AuthController;
 use App\Http\Controllers\API\Admin\CategoryController;
+use App\Http\Controllers\API\Admin\SubcategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::patch('/restore/{id}', [CategoryController::class, 'restoreCategory']);
         Route::delete('/destroy/{id}', [CategoryController::class, 'destroyCategory']);
         Route::get('/trash/data', [CategoryController::class, 'getTrashCategory']);
+    });
+
+    Route::group(['prefix' => 'subcategory'], function () {
+        Route::get('/', [SubcategoryController::class, 'getSubcategories']);
     });
 });
 Route::post('/login', [AuthController::class, 'login']);
