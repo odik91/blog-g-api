@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Subcategory;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -61,6 +62,7 @@ class SubcategoryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'subcategory' => 'required|min:3|max:300|unique:subcategories,subcategory,category_id',
+            'category_id' => 'required',
             'description' => 'max:300',
         ]);
 
@@ -111,6 +113,7 @@ class SubcategoryController extends Controller
                     return $query->where('category_id', $request->category_id);
                 })->ignore($id),
             ],
+            'category_id' => 'required',
             'description' => 'max:300',
         ]);
 
@@ -134,6 +137,71 @@ class SubcategoryController extends Controller
             return response()->json([
                 'message' => 'Fail to update subcategory',
                 'error_log' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function massUpdateSubcategory(Request $request)
+    {
+        foreach ($request->all() as $updateData) {
+            // return response()->json($updateData, 200);
+            $validator = Validator::make($updateData, [
+                'id' => 'required|exists:subcategories,id',
+                'category_id' => 'required|exists:categories,id',
+                'subcategory' => [
+                    'required',
+                    'min:3',
+                    'max:300',
+                    Rule::unique('subcategories')->where(function ($query) use ($updateData) {
+                        return $query->where('category_id', $updateData['category_id']);
+                    })->ignore($updateData['id']),
+                ],
+                'description' => 'max:300',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 400);
+            }
+        }
+
+        DB::beginTransaction();
+        try {
+            $message = '';
+            $data = $request->all();
+            foreach ($data as $key => $item) {
+                // Cari subcategory berdasarkan ID
+                $subcategory = Subcategory::find($item['id']);
+                
+                if ($subcategory) {
+                    // Update subcategory
+                    $subcategory->update([
+                        'category_id' => $item['category_id'],
+                        'subcategory' => $item['subcategory'],
+                        'description' => $item['description'],
+                        'slug' => Str::slug($item['subcategory'])
+                    ]);
+    
+                    // Format pesan sukses
+                    if ($key == 0) {
+                        $message .= ucfirst($subcategory['subcategory']) . ', ';
+                    } elseif ($key == count($data) - 1) {
+                        $message .= 'and ' . $subcategory['subcategory'];
+                    } else {
+                        $message .= $subcategory['subcategory'] . ', ';
+                    }
+                } else {
+                    throw new Exception("Subcategory ID {$item['id']} not found");
+                }
+            }
+
+            DB::commit();
+            return response()->json([
+                'message' => $message . ' edited successfully.'
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage()
             ], 500);
         }
     }

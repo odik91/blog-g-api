@@ -114,12 +114,7 @@ class CategoryController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'id' => $updateData['id'],
-                    'name' => $updateData['name'],
-                    'slug' => Str::slug($updateData['name']),
-                    'description' => $updateData['description'],
-                ], 400);
+                return response()->json($validator->errors(), 400);
             }
         }
 
@@ -132,7 +127,8 @@ class CategoryController extends Controller
                 if ($category) {
                     $category->update([
                         'name' => $item['name'],
-                        'description' => $item['description']
+                        'description' => $item['description'],
+                        'slug' => Str::slug($item['name']),
                     ]);
 
                     if ($key == 0) {
