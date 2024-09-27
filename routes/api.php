@@ -16,6 +16,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => 'category'], function () {
         Route::post('/', [CategoryController::class, 'create']);
         Route::get('/', [CategoryController::class, 'getCategory']);
+        Route::get('/non-sort', [CategoryController::class, 'getCategoryNonSort']);
         Route::get('/{id}', [CategoryController::class, 'getSingleCategory']);
         Route::patch('/{id}', [CategoryController::class, 'editCategory']);
         Route::patch('/', [CategoryController::class, 'massUpdateCategory']);

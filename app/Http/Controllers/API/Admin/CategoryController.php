@@ -74,6 +74,12 @@ class CategoryController extends Controller
         ], 200);
     }
 
+    public function getCategoryNonSort()
+    {
+        $categories = Category::select('id', 'name')->orderBy('name', 'asc')->get();
+        return response()->json($categories, 200);
+    }
+
     public function editCategory(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
