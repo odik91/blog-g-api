@@ -208,4 +208,23 @@ class SubcategoryController extends Controller
             ], 500);
         }
     }
+
+    public function deleteSubcategory($id)
+    {
+        $subcategory = Subcategory::find($id);
+        if ($subcategory) {
+            $name = $subcategory['subcategory'];
+            try {
+                $subcategory->delete();
+                return response()->json([
+                    'message' => "Subcategory {$name} deleted successfully"
+                ], 200);
+            } catch (Exception $e) {
+                return response()->json([
+                    'message' => "Fail to delete subcategory $name",
+                    'error_log' => $e->getMessage(),
+                ], 500);
+            }
+        }
+    }
 }

@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/{id}', [SubcategoryController::class, 'getSubcategory']);
         Route::patch('/{id}', [SubcategoryController::class, 'updateSubcategory']);
         Route::patch('/', [SubcategoryController::class, 'massUpdateSubcategory']);
+        Route::delete('/{id}', [SubcategoryController::class, 'deleteSubcategory']);
     });
 });
 Route::post('/login', [AuthController::class, 'login']);
