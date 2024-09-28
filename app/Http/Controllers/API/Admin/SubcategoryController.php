@@ -63,6 +63,7 @@ class SubcategoryController extends Controller
         $validator = Validator::make($request->all(), [
             'subcategory' => 'required|min:3|max:300|unique:subcategories,subcategory,category_id',
             'category_id' => 'required',
+            'is_active' => 'required',
             'description' => 'max:300',
         ]);
 
@@ -127,6 +128,7 @@ class SubcategoryController extends Controller
                 'category_id' => $request['category_id'],
                 'subcategory' => $request['subcategory'],
                 'description' => $request['description'],
+                'is_active' => $request['is_active'],
                 'slug' => Str::slug($request['subcategory'])
             ];
             $subcategory->update($data);
@@ -171,16 +173,17 @@ class SubcategoryController extends Controller
             foreach ($data as $key => $item) {
                 // Cari subcategory berdasarkan ID
                 $subcategory = Subcategory::find($item['id']);
-                
+
                 if ($subcategory) {
                     // Update subcategory
                     $subcategory->update([
                         'category_id' => $item['category_id'],
                         'subcategory' => $item['subcategory'],
                         'description' => $item['description'],
+                        'is_active' => $item['is_active'],
                         'slug' => Str::slug($item['subcategory'])
                     ]);
-    
+
                     // Format pesan sukses
                     if ($key == 0) {
                         $message .= ucfirst($subcategory['subcategory']) . ', ';
