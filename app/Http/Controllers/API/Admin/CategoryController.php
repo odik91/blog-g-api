@@ -74,9 +74,15 @@ class CategoryController extends Controller
         ], 200);
     }
 
-    public function getCategoryNonSort()
+    public function getCategoryNonSort(Request $request)
     {
-        $categories = Category::select('id', 'name')->orderBy('name', 'asc')->get();
+        $search = $request->input('search');
+        $categories = Category::when($search, function ($query, $search) {
+            return $query->where('name', 'like', "%" . $search . "%");
+        })
+            ->select('id', 'name')
+            ->get();
+
         return response()->json($categories, 200);
     }
 
