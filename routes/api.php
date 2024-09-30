@@ -28,6 +28,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::group(['prefix' => 'subcategory'], function () {
         Route::get('/', [SubcategoryController::class, 'getSubcategories']);
+        Route::get('/non-sort', [SubcategoryController::class, 'getSubcategoriesNonSort']);
         Route::post('/', [SubcategoryController::class, 'createSubcategory']);
         Route::get('/{id}', [SubcategoryController::class, 'getSubcategory']);
         Route::patch('/{id}', [SubcategoryController::class, 'updateSubcategory']);

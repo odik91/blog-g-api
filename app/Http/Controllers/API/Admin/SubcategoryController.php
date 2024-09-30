@@ -58,6 +58,13 @@ class SubcategoryController extends Controller
         return response()->json($subcategories, 200);
     }
 
+    public function getSubcategoriesNonSort(Request $request)
+    {
+        $category_id = $request->input('category_id');
+        $subcategories = Subcategory::where('category_id', $category_id)->select('id', 'subcategory')->get();
+        return response()->json($subcategories, 200);
+    }
+
     public function createSubcategory(Request $request)
     {
         $validator = Validator::make($request->all(), [
