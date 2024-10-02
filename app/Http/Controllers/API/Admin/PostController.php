@@ -68,4 +68,17 @@ class PostController extends Controller
         $posts = Post::with('getCategory')->with('getSubcategory')->get();
         return response()->json($posts, 200);
     }
+
+    public function getSinglePost($id)
+    {
+        try {
+            $post = Post::with('getCategory')->with('getSubcategory')->find($id);
+            return response()->json($post, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Fail to create post',
+                'error_log' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
