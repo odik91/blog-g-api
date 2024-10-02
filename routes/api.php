@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     });
 
     Route::group(['prefix' => 'post'], function () {
+        Route::get('/', [PostController::class, 'getPosts']);
         Route::post('/', [PostController::class, 'posting']);
     });
 });

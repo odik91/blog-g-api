@@ -13,4 +13,12 @@ class Post extends Model
     use HasFactory, Notifiable, HasUuids, SoftDeletes;
 
     protected $guarded = [];
+
+    public function getCategory() {
+        return $this->hasOne(Category::class, 'id', 'category_id')->select('id', 'name');
+    }
+    
+    public function getSubcategory() {
+        return $this->hasOne(Subcategory::class, 'id', 'subcategory_id')->select('id', 'subcategory');
+    }
 }

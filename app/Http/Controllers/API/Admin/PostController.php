@@ -53,7 +53,7 @@ class PostController extends Controller
             $post = Post::create($data);
             return response()->json([
                 'message' => 'Post added successfully',
-                'subcategory' => $post
+                'post' => $post
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
@@ -61,5 +61,11 @@ class PostController extends Controller
                 'error_log' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function getPosts(Request $request)
+    {
+        $posts = Post::with('getCategory')->with('getSubcategory')->get();
+        return response()->json($posts, 200);
     }
 }
