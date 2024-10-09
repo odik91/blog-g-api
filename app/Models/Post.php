@@ -14,11 +14,18 @@ class Post extends Model
 
     protected $guarded = [];
 
-    public function getCategory() {
+    public function getUser()
+    {
+        return $this->hasOne(User::class, 'id', 'created_by')->select('id', 'name');
+    }
+
+    public function getCategory()
+    {
         return $this->hasOne(Category::class, 'id', 'category_id')->select('id', 'name');
     }
-    
-    public function getSubcategory() {
+
+    public function getSubcategory()
+    {
         return $this->hasOne(Subcategory::class, 'id', 'subcategory_id')->select('id', 'subcategory');
     }
 }

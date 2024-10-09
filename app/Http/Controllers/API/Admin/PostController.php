@@ -49,6 +49,7 @@ class PostController extends Controller
             $data['category_id'] = (int) $request['category_id'];
             $data['slug'] = Str::slug($request['title']);
             $data['is_active'] = $request['is_active'] === 'active' ? true : false;
+            $data['created_by'] = $request->user()->id;
 
             $post = Post::create($data);
             return response()->json([
@@ -71,6 +72,7 @@ class PostController extends Controller
 
         $posts = Post::with('getCategory')
             ->with('getSubcategory')
+            ->with('getUser')
             ->orderBy("posts." . $orderBy, $order)
             ->paginate($limit);
         return response()->json($posts, 200);
