@@ -23,6 +23,7 @@ return new class extends Migration
             $table->longText('seo_title', 300);
             $table->longText('content');
             $table->boolean('is_active');
+            $table->unsignedBigInteger('created_by');
             $table->softDeletes();
             $table->timestamps();
 
@@ -30,6 +31,8 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
 
             $table->foreign('subcategory_id')->references('id')->on('subcategories')->onDelete('cascade');
+
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

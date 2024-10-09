@@ -52,7 +52,7 @@ class PostController extends Controller
 
             $post = Post::create($data);
             return response()->json([
-                'message' => 'Post added successfully',
+                'message' => "Post $post->title added successfully",
                 'post' => $post
             ], 201);
         } catch (\Exception $e) {
@@ -65,7 +65,14 @@ class PostController extends Controller
 
     public function getPosts(Request $request)
     {
-        $posts = Post::with('getCategory')->with('getSubcategory')->get();
+        $limit = (int) $request->input('limit', 10);
+        $order = $request->input('order', 'asc');
+        $orderBy = $request->input('orderBy', 'title');
+
+        $posts = Post::with('getCategory')
+            ->with('getSubcategory')
+            ->orderBy("posts." . $orderBy, $order)
+            ->paginate($limit);
         return response()->json($posts, 200);
     }
 
