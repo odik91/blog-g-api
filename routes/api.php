@@ -42,6 +42,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('/', [PostController::class, 'posting']);
         Route::get('/', [PostController::class, 'getPosts']);
         Route::get('/{id}', [PostController::class, 'getSinglePost']);
+        Route::patch('/{id}', [PostController::class, 'editPost']);
     });
 });
 Route::post('/login', [AuthController::class, 'login']);
